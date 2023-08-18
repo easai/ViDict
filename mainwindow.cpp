@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
       net_manager(new QNetworkAccessManager(this)), net_reply(nullptr),
       m_data_buffer(new QByteArray) {
   ui->setupUi(this);
+  ui->radioButton_en->setChecked(true);
 }
 
 MainWindow::~MainWindow() {
@@ -42,16 +43,12 @@ void MainWindow::on_pushButton_clicked() {
   word = ui->lineEdit->text();
   if (word.isEmpty())
     return;
-  QString url = "https://botudien.pythonanywhere.com/api/lookup/en/" + word;
-  lookup(&url);
-}
-
-void MainWindow::on_pushButton_vi_clicked() {
-  QString word;
-  word = ui->lineEdit_vi->text();
-  if (word.isEmpty())
-    return;
-  QString url = "https://botudien.pythonanywhere.com/api/lookup/vi/" + word;
+  QString lang = "en";
+  if (!ui->radioButton_en->isChecked()) {
+    lang = "vi";
+  }
+  QString url =
+      "https://botudien.pythonanywhere.com/api/lookup/" + lang + "/" + word;
   lookup(&url);
 }
 

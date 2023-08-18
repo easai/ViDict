@@ -38,8 +38,6 @@ private slots:
 
     void on_actionCu_t_triggered();
 
-    void on_pushButton_vi_clicked();
-
     void on_pushButton_clicked();
 
 private:
