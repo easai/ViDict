@@ -12,6 +12,17 @@ MainWindow::MainWindow(QWidget *parent)
       m_data_buffer(new QByteArray) {
   ui->setupUi(this);
   ui->radioButton_en->setChecked(true);
+
+  connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::lookup);
+  connect(ui->action_Quit, &QAction::triggered, this, &QApplication::quit);
+  connect(ui->action_About, &QAction::triggered, this, &MainWindow::about);
+  connect(ui->actionAbout_Qt, &QAction::triggered, this,
+          &QApplication::aboutQt);
+  connect(ui->actionCu_t, &QAction::triggered, this, &MainWindow::cut);
+  connect(ui->action_Paste, &QAction::triggered, this, &MainWindow::paste);
+  connect(ui->action_Copy, &QAction::triggered, this, &MainWindow::copy);
+  connect(ui->action_Undo, &QAction::triggered, this, &MainWindow::undo);
+  connect(ui->action_Redo, &QAction::triggered, this, &MainWindow::redo);
 }
 
 MainWindow::~MainWindow() {
@@ -19,26 +30,22 @@ MainWindow::~MainWindow() {
   delete m_data_buffer;
 }
 
-void MainWindow::on_action_About_triggered() {
+void MainWindow::about() {
   QMessageBox::about(this, "About ViDict",
                      "ViDict v1.0\n\nCopyright 2023 easai");
 }
 
-void MainWindow::on_actionAbout_Qt_triggered() { QApplication::aboutQt(); }
+void MainWindow::redo() { ui->textEdit->redo(); }
 
-void MainWindow::on_action_Quit_triggered() { QApplication::quit(); }
+void MainWindow::undo() { ui->textEdit->undo(); }
 
-void MainWindow::on_action_Redo_triggered() { ui->textEdit->redo(); }
+void MainWindow::paste() { ui->textEdit->paste(); }
 
-void MainWindow::on_action_Undo_triggered() { ui->textEdit->undo(); }
+void MainWindow::copy() { ui->textEdit->copy(); }
 
-void MainWindow::on_action_Paste_triggered() { ui->textEdit->paste(); }
+void MainWindow::cut() { ui->textEdit->cut(); }
 
-void MainWindow::on_action_Copy_triggered() { ui->textEdit->copy(); }
-
-void MainWindow::on_actionCu_t_triggered() { ui->textEdit->cut(); }
-
-void MainWindow::on_pushButton_clicked() {
+void MainWindow::lookup() {
   QString word;
   word = ui->lineEdit->text();
   if (word.isEmpty())
@@ -49,10 +56,10 @@ void MainWindow::on_pushButton_clicked() {
   }
   QString url =
       "https://botudien.pythonanywhere.com/api/lookup/" + lang + "/" + word;
-  lookup(&url);
+  _lookup(&url);
 }
 
-void MainWindow::lookup(QString *url) {
+void MainWindow::_lookup(QString *url) {
   ui->textEdit->clear();
   const QUrl API_ENDPOINT(*url);
   QNetworkRequest request;
