@@ -34,26 +34,23 @@ MainWindow::~MainWindow() {
   delete m_data_buffer;
 }
 
-void MainWindow::saveSettings()
-{
-  QSettings settings(authorName, appName);
-  settings.beginGroup(windowSize);
-  QSize winSize=frameSize();
-  settings.setValue(windowSizeWidth, winSize.width());
-  settings.setValue(windowSizeHeight, winSize.height());
+void MainWindow::saveSettings() {
+  QSettings settings(AUTHOR, APPNAME);
+  settings.beginGroup(WINDOW);
+  QSize winSize = frameSize();
+  settings.setValue(WIDTH, winSize.width());
+  settings.setValue(HEIGHT, winSize.height());
   settings.endGroup();
 }
 
-void MainWindow::loadSettings()
-{
-  QSettings settings(authorName, appName);
-  settings.beginGroup(windowSize);
-  int width = settings.value(windowSizeWidth, QVariant(458)).toInt();
-  int height = settings.value(windowSizeHeight, QVariant(311)).toInt();
-  this->resize(width,height);
+void MainWindow::loadSettings() {
+  QSettings settings(AUTHOR, APPNAME);
+  settings.beginGroup(WINDOW);
+  int width = settings.value(WIDTH, QVariant(458)).toInt();
+  int height = settings.value(HEIGHT, QVariant(311)).toInt();
+  this->resize(width, height);
   settings.endGroup();
 }
-
 
 void MainWindow::lookup() {
   QString word;

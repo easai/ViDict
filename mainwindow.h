@@ -1,6 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define AUTHOR "easai"
+#define APPNAME "ViDict"
+#define WINDOW "Window"
+#define WIDTH "Width"
+#define HEIGHT "Height"
+
 #include <QMainWindow>
 #include <QNetworkAccessManager>
 
@@ -31,11 +37,6 @@ private slots:
   void lookup();
 
 private:
-  const QString authorName = "easai";
-  const QString appName = "ViDict";
-  const QString windowSize="WindowSize";
-  const QString windowSizeWidth="width";
-  const QString windowSizeHeight="height";
   Ui::MainWindow *ui;
   QNetworkAccessManager *net_manager;
   QNetworkReply *net_reply;
