@@ -95,6 +95,9 @@ void MainWindow::dataReadFinished() {
       QString en = map["en"].toString();
       ui->textEdit->append(vi + " : " + en + "\n");
     }
+    if(array.size()<=0){
+      ui->textEdit->append("Not found");
+    }
     m_data_buffer->clear();
   }
 }
