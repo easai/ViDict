@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "aboutdialog.h"
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -102,8 +103,10 @@ void MainWindow::dataReadFinished() {
   }
 }
 void MainWindow::about() {
-  QMessageBox::about(this, "About ViDict",
-                     "ViDict v1.0\n\nCopyright 2023 easai");
+  AboutDialog *dlg=new AboutDialog(this);
+  dlg->exec();
+//  QMessageBox::about(this, "About ViDict",
+//                     "ViDict v1.0\n\nCopyright 2023 easai");
 }
 
 void MainWindow::redo() { ui->textEdit->redo(); }

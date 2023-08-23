@@ -23,6 +23,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(ViDict
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        aboutdialog.h aboutdialog.cpp aboutdialog.ui
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET ViDict APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
