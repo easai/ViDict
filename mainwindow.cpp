@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QNetworkReply>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -23,27 +24,36 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->action_Copy, &QAction::triggered, this, &MainWindow::copy);
   connect(ui->action_Undo, &QAction::triggered, this, &MainWindow::undo);
   connect(ui->action_Redo, &QAction::triggered, this, &MainWindow::redo);
+
+  loadSettings();
 }
 
 MainWindow::~MainWindow() {
+  saveSettings();
   delete ui;
   delete m_data_buffer;
 }
 
-void MainWindow::about() {
-  QMessageBox::about(this, "About ViDict",
-                     "ViDict v1.0\n\nCopyright 2023 easai");
+void MainWindow::saveSettings()
+{
+  QSettings settings(authorName, appName);
+  settings.beginGroup(windowSize);
+  QSize winSize=frameSize();
+  settings.setValue(windowSizeWidth, winSize.width());
+  settings.setValue(windowSizeHeight, winSize.height());
+  settings.endGroup();
 }
 
-void MainWindow::redo() { ui->textEdit->redo(); }
+void MainWindow::loadSettings()
+{
+  QSettings settings(authorName, appName);
+  settings.beginGroup(windowSize);
+  int width = settings.value(windowSizeWidth, QVariant(458)).toInt();
+  int height = settings.value(windowSizeHeight, QVariant(311)).toInt();
+  this->resize(width,height);
+  settings.endGroup();
+}
 
-void MainWindow::undo() { ui->textEdit->undo(); }
-
-void MainWindow::paste() { ui->textEdit->paste(); }
-
-void MainWindow::copy() { ui->textEdit->copy(); }
-
-void MainWindow::cut() { ui->textEdit->cut(); }
 
 void MainWindow::lookup() {
   QString word;
@@ -91,3 +101,17 @@ void MainWindow::dataReadFinished() {
     m_data_buffer->clear();
   }
 }
+void MainWindow::about() {
+  QMessageBox::about(this, "About ViDict",
+                     "ViDict v1.0\n\nCopyright 2023 easai");
+}
+
+void MainWindow::redo() { ui->textEdit->redo(); }
+
+void MainWindow::undo() { ui->textEdit->undo(); }
+
+void MainWindow::paste() { ui->textEdit->paste(); }
+
+void MainWindow::copy() { ui->textEdit->copy(); }
+
+void MainWindow::cut() { ui->textEdit->cut(); }
