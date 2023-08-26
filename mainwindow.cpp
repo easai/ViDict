@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QNetworkReply>
 #include <QSettings>
+#include <QColorDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -25,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->action_Copy, &QAction::triggered, this, &MainWindow::copy);
   connect(ui->action_Undo, &QAction::triggered, this, &MainWindow::undo);
   connect(ui->action_Redo, &QAction::triggered, this, &MainWindow::redo);
+  connect(ui->action_Preference, &QAction::triggered, this, &MainWindow::preference);
 
   loadSettings();
 }
@@ -38,18 +40,14 @@ MainWindow::~MainWindow() {
 void MainWindow::saveSettings() {
   QSettings settings(AUTHOR, APPNAME);
   settings.beginGroup(WINDOW);
-  QSize winSize = frameSize();
-  settings.setValue(WIDTH, winSize.width());
-  settings.setValue(HEIGHT, winSize.height());
+  settings.setValue(GEOMETRY, saveGeometry());
   settings.endGroup();
 }
 
 void MainWindow::loadSettings() {
   QSettings settings(AUTHOR, APPNAME);
   settings.beginGroup(WINDOW);
-  int width = settings.value(WIDTH, QVariant(458)).toInt();
-  int height = settings.value(HEIGHT, QVariant(311)).toInt();
-  this->resize(width, height);
+  restoreGeometry(settings.value(GEOMETRY).toByteArray());
   settings.endGroup();
 }
 
@@ -65,6 +63,25 @@ void MainWindow::lookup() {
   QString url =
       "https://botudien.pythonanywhere.com/api/lookup/" + lang + "/" + word;
   _lookup(&url);
+}
+
+void MainWindow::preference()
+{
+}
+
+void MainWindow::setBackground()
+{
+  QColor color=QColorDialog::getColor(background,this,"Choose Background Color");
+  if(color.isValid()){
+    background=color;
+    QString css=QString("background : %1").arg(color.name());
+    ui->textEdit->setStyleSheet(css);
+  }
+}
+
+QColor MainWindow::getBackground() const
+{
+  return background;
 }
 
 void MainWindow::_lookup(QString *url) {
@@ -105,8 +122,6 @@ void MainWindow::dataReadFinished() {
 void MainWindow::about() {
   AboutDialog *dlg=new AboutDialog(this);
   dlg->exec();
-//  QMessageBox::about(this, "About ViDict",
-//                     "ViDict v1.0\n\nCopyright 2023 easai");
 }
 
 void MainWindow::redo() { ui->textEdit->redo(); }

@@ -6,7 +6,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
-    ui->textEdit->setReadOnly(true);
+    ui->textBrowser->setOpenExternalLinks(true);
 }
 
 AboutDialog::~AboutDialog()

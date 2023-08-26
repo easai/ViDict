@@ -4,11 +4,11 @@
 #define AUTHOR "easai"
 #define APPNAME "ViDict"
 #define WINDOW "Window"
-#define WIDTH "Width"
-#define HEIGHT "Height"
+#define GEOMETRY "Geometry"
 
 #include <QMainWindow>
 #include <QNetworkAccessManager>
+#include <QColor>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,7 +23,9 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
-public slots:
+  QColor getBackground() const;
+
+  public slots:
   void dataReadyToRead();
   void dataReadFinished();
 
@@ -35,12 +37,15 @@ private slots:
   void copy();
   void cut();
   void lookup();
+  void preference();
+  void setBackground();
 
 private:
   Ui::MainWindow *ui;
   QNetworkAccessManager *net_manager;
   QNetworkReply *net_reply;
   QByteArray *m_data_buffer;
+  QColor background;
   void _lookup(QString *);
   void saveSettings();
   void loadSettings();
