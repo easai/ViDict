@@ -1,13 +1,13 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "aboutdialog.h"
+#include <QColorDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QNetworkReply>
 #include <QSettings>
-#include <QColorDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -26,9 +26,14 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->action_Copy, &QAction::triggered, this, &MainWindow::copy);
   connect(ui->action_Undo, &QAction::triggered, this, &MainWindow::undo);
   connect(ui->action_Redo, &QAction::triggered, this, &MainWindow::redo);
-  connect(ui->action_Preference, &QAction::triggered, this, &MainWindow::preference);
+  connect(ui->action_Preference, &QAction::triggered, this,
+          &MainWindow::preference);
+  connect(ui->radioButton_en, &QPushButton::clicked, this, &MainWindow::setLang);
+  connect(ui->radioButton_vi, &QPushButton::clicked, this, &MainWindow::setLang);
 
   loadSettings();
+  ui->radioButton_en->setChecked(m_lang=="en");
+  ui->radioButton_vi->setChecked(m_lang=="vi");
 }
 
 MainWindow::~MainWindow() {
@@ -41,6 +46,7 @@ void MainWindow::saveSettings() {
   QSettings settings(AUTHOR, APPNAME);
   settings.beginGroup(WINDOW);
   settings.setValue(GEOMETRY, saveGeometry());
+  settings.setValue(LANG, m_lang);
   settings.endGroup();
 }
 
@@ -48,6 +54,10 @@ void MainWindow::loadSettings() {
   QSettings settings(AUTHOR, APPNAME);
   settings.beginGroup(WINDOW);
   restoreGeometry(settings.value(GEOMETRY).toByteArray());
+  m_lang=settings.value(LANG, DEFAULT_LANG).toString();
+  if(m_lang.isEmpty()){
+      m_lang=DEFAULT_LANG;
+  }
   settings.endGroup();
 }
 
@@ -56,33 +66,27 @@ void MainWindow::lookup() {
   word = ui->lineEdit->text();
   if (word.isEmpty())
     return;
-  QString lang = "en";
-  if (!ui->radioButton_en->isChecked()) {
-    lang = "vi";
-  }
+
   QString url =
-      "https://botudien.pythonanywhere.com/api/lookup/" + lang + "/" + word;
+      "https://botudien.pythonanywhere.com/api/lookup/" + m_lang + "/" + word;
   _lookup(&url);
 }
 
-void MainWindow::preference()
-{
-}
+void MainWindow::preference() {}
 
-void MainWindow::setBackground()
-{
-  QColor color=QColorDialog::getColor(background,this,"Choose Background Color");
-  if(color.isValid()){
-    background=color;
-    QString css=QString("background : %1").arg(color.name());
+void MainWindow::setBackground() {
+  QColor color =
+      QColorDialog::getColor(background, this, "Choose Background Color");
+  if (color.isValid()) {
+    background = color;
+    QString css = QString("background : %1").arg(color.name());
     ui->textEdit->setStyleSheet(css);
   }
 }
 
-QColor MainWindow::getBackground() const
-{
-  return background;
-}
+QString MainWindow::lang() const { return m_lang; }
+
+QColor MainWindow::getBackground() const { return background; }
 
 void MainWindow::_lookup(QString *url) {
   ui->textEdit->clear();
@@ -113,14 +117,23 @@ void MainWindow::dataReadFinished() {
       QString en = map["en"].toString();
       ui->textEdit->append(vi + " : " + en + "\n");
     }
-    if(array.size()<=0){
+    if (array.size() <= 0) {
       ui->textEdit->append("Not found");
     }
     m_data_buffer->clear();
   }
 }
+
+void MainWindow::setLang()
+{
+  m_lang = "en";
+  if (!ui->radioButton_en->isChecked()) {
+    m_lang = "vi";
+  }
+}
+
 void MainWindow::about() {
-  AboutDialog *dlg=new AboutDialog(this);
+  AboutDialog *dlg = new AboutDialog(this);
   dlg->exec();
 }
 

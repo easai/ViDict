@@ -5,6 +5,8 @@
 #define APPNAME "ViDict"
 #define WINDOW "Window"
 #define GEOMETRY "Geometry"
+#define LANG "Lang"
+#define DEFAULT_LANG "en"
 
 #include <QMainWindow>
 #include <QNetworkAccessManager>
@@ -25,9 +27,12 @@ public:
 
   QColor getBackground() const;
 
+  QString lang() const;
+
   public slots:
   void dataReadyToRead();
   void dataReadFinished();
+  void setLang();
 
 private slots:
   void about();
@@ -45,6 +50,7 @@ private:
   QNetworkAccessManager *net_manager;
   QNetworkReply *net_reply;
   QByteArray *m_data_buffer;
+  QString m_lang;
   QColor background;
   void _lookup(QString *);
   void saveSettings();
