@@ -7,6 +7,8 @@ AboutDialog::AboutDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->textBrowser->setOpenExternalLinks(true);
+    QPixmap pix(":/images/botudien-qr.png");
+    ui->label_barcode->setPixmap(pix.scaled(150,150));
 }
 
 AboutDialog::~AboutDialog()
