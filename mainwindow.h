@@ -7,10 +7,14 @@
 #define GEOMETRY "Geometry"
 #define LANG "Lang"
 #define DEFAULT_LANG "en"
+#define APIFORMAT "APIFormat"
+#define DEFAULT_APIFORMAT "https://botudien.pythonanywhere.com/api/lookup/%1/%2"
+#define FONT "Font"
 
 #include <QMainWindow>
 #include <QNetworkAccessManager>
 #include <QColor>
+#include "config.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -36,6 +40,7 @@ public:
 
 private slots:
   void about();
+  void setConfig();
   void redo();
   void undo();
   void paste();
@@ -52,7 +57,9 @@ private:
   QByteArray *m_data_buffer;
   QString m_lang;
   QColor background;
-  void _lookup(QString *);
+  Config m_config;
+  QString m_url;
+  void _lookup();
   void saveSettings();
   void loadSettings();
 };

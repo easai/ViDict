@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "aboutdialog.h"
+#include "configdialog.h"
 #include <QColorDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -28,12 +29,17 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->action_Redo, &QAction::triggered, this, &MainWindow::redo);
   connect(ui->action_Preference, &QAction::triggered, this,
           &MainWindow::preference);
-  connect(ui->radioButton_en, &QPushButton::clicked, this, &MainWindow::setLang);
-  connect(ui->radioButton_vi, &QPushButton::clicked, this, &MainWindow::setLang);
+  connect(ui->radioButton_en, &QPushButton::clicked, this,
+          &MainWindow::setLang);
+  connect(ui->radioButton_vi, &QPushButton::clicked, this,
+          &MainWindow::setLang);
+  connect(ui->action_Preference, &QAction::triggered, this,
+          &MainWindow::setConfig);
 
   loadSettings();
-  ui->radioButton_en->setChecked(m_lang=="en");
-  ui->radioButton_vi->setChecked(m_lang=="vi");
+  ui->radioButton_en->setChecked(m_lang == "en");
+  ui->radioButton_vi->setChecked(m_lang == "vi");
+  ui->textEdit->setFont(m_config.font());
 }
 
 MainWindow::~MainWindow() {
@@ -47,6 +53,8 @@ void MainWindow::saveSettings() {
   settings.beginGroup(WINDOW);
   settings.setValue(GEOMETRY, saveGeometry());
   settings.setValue(LANG, m_lang);
+  settings.setValue(APIFORMAT, m_config.format());
+  settings.setValue(FONT, m_config.font().toString());
   settings.endGroup();
 }
 
@@ -54,10 +62,18 @@ void MainWindow::loadSettings() {
   QSettings settings(AUTHOR, APPNAME);
   settings.beginGroup(WINDOW);
   restoreGeometry(settings.value(GEOMETRY).toByteArray());
-  m_lang=settings.value(LANG, DEFAULT_LANG).toString();
-  if(m_lang.isEmpty()){
-      m_lang=DEFAULT_LANG;
+  m_lang = settings.value(LANG, DEFAULT_LANG).toString();
+  if (m_lang.isEmpty()) {
+    m_lang = DEFAULT_LANG;
   }
+  m_config.setFormat(settings.value(APIFORMAT, DEFAULT_APIFORMAT).toString());
+  if (m_config.format().isEmpty()) {
+    m_config.setFormat(DEFAULT_APIFORMAT);
+  }
+  QFont font = ui->textEdit->font();
+  font.fromString(settings.value(FONT, font.toString()).toString());
+  m_config.setFont(font);
+
   settings.endGroup();
 }
 
@@ -67,9 +83,8 @@ void MainWindow::lookup() {
   if (word.isEmpty())
     return;
 
-  QString url =
-      "https://botudien.pythonanywhere.com/api/lookup/" + m_lang + "/" + word;
-  _lookup(&url);
+  m_url = QString(m_config.format()).arg(m_lang, word);
+  _lookup();
 }
 
 void MainWindow::preference() {}
@@ -88,9 +103,9 @@ QString MainWindow::lang() const { return m_lang; }
 
 QColor MainWindow::getBackground() const { return background; }
 
-void MainWindow::_lookup(QString *url) {
+void MainWindow::_lookup() {
   ui->textEdit->clear();
-  const QUrl API_ENDPOINT(*url);
+  const QUrl API_ENDPOINT(m_url);
   QNetworkRequest request;
   request.setUrl(API_ENDPOINT);
 
@@ -124,8 +139,7 @@ void MainWindow::dataReadFinished() {
   }
 }
 
-void MainWindow::setLang()
-{
+void MainWindow::setLang() {
   m_lang = "en";
   if (!ui->radioButton_en->isChecked()) {
     m_lang = "vi";
@@ -135,6 +149,15 @@ void MainWindow::setLang()
 void MainWindow::about() {
   AboutDialog *dlg = new AboutDialog(this);
   dlg->exec();
+}
+
+void MainWindow::setConfig() {
+  ConfigDialog *dlg = new ConfigDialog(this, m_config);
+  auto res = dlg->exec();
+  if (res == QDialog::Accepted) {
+    m_config = dlg->config();
+    ui->textEdit->setFont(m_config.font());
+  }
 }
 
 void MainWindow::redo() { ui->textEdit->redo(); }

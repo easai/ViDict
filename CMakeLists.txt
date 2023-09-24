@@ -26,6 +26,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         aboutdialog.h aboutdialog.cpp aboutdialog.ui
         icon.rc
         resources.qrc
+        configdialog.h configdialog.cpp configdialog.ui
+        config.h config.cpp
 
     )
 # Define target properties for Android with Qt 6 as:
