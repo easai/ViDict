@@ -49,6 +49,7 @@ private slots:
   void lookup();
   void preference();
   void setBackground();
+  void openBotudien();
 
 private:
   Ui::MainWindow *ui;

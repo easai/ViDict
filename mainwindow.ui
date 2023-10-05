@@ -94,6 +94,7 @@
     </property>
     <addaction name="actionAbout_Qt"/>
     <addaction name="action_About"/>
+    <addaction name="action_Open_Botudien"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -143,6 +144,11 @@
   <action name="action_Preference">
    <property name="text">
     <string>Pr&amp;eferences ...</string>
+   </property>
+  </action>
+  <action name="action_Open_Botudien">
+   <property name="text">
+    <string>&amp;Open Botudien</string>
    </property>
   </action>
  </widget>

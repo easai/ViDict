@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QNetworkReply>
 #include <QSettings>
+#include <QDesktopServices>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -35,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
           &MainWindow::setLang);
   connect(ui->action_Preference, &QAction::triggered, this,
           &MainWindow::setConfig);
+  connect(ui->action_Open_Botudien, &QAction::triggered, this,
+          &MainWindow::openBotudien);
 
   loadSettings();
   ui->radioButton_en->setChecked(m_lang == "en");
@@ -97,6 +100,12 @@ void MainWindow::setBackground() {
     QString css = QString("background : %1").arg(color.name());
     ui->textEdit->setStyleSheet(css);
   }
+}
+
+void MainWindow::openBotudien()
+{
+  const QUrl botudien("https://botudien.pythonanywhere.com/");
+  QDesktopServices::openUrl(botudien);
 }
 
 QString MainWindow::lang() const { return m_lang; }
