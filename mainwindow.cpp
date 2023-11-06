@@ -3,13 +3,13 @@
 #include "aboutdialog.h"
 #include "configdialog.h"
 #include <QColorDialog>
+#include <QDesktopServices>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QNetworkReply>
 #include <QSettings>
-#include <QDesktopServices>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
       m_data_buffer(new QByteArray) {
   ui->setupUi(this);
   ui->radioButton_en->setChecked(true);
-
+  setWindowIcon(QIcon("://images/vidict-favicon.ico"));
   connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::lookup);
   connect(ui->action_Quit, &QAction::triggered, this, &QApplication::quit);
   connect(ui->action_About, &QAction::triggered, this, &MainWindow::about);
@@ -102,8 +102,7 @@ void MainWindow::setBackground() {
   }
 }
 
-void MainWindow::openBotudien()
-{
+void MainWindow::openBotudien() {
   const QUrl botudien("https://botudien.pythonanywhere.com/");
   QDesktopServices::openUrl(botudien);
 }
